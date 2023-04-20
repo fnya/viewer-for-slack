@@ -8,13 +8,19 @@
   },
   "package": {
     "productName": "viewer-for-slack",
-    "version": "0.0.0"
+    "version": "0.0.1"
   },
   "tauri": {
     "allowlist": {
       "all": false,
+      "http": {
+        "scope": ["https://script.google.com/macros/s/*"]
+      },
+      "fs": {
+        "writeFile": true,
+        "scope": ["**", "**/*", "/**/*"]
+      },
       "shell": {
-        "all": false,
         "open": true
       }
     },
@@ -27,7 +33,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.tauri.dev",
+      "identifier": "net.aruse.viewer-for-slack",
       "targets": "all"
     },
     "security": {
@@ -39,10 +45,10 @@
     "windows": [
       {
         "fullscreen": false,
+        "height": 768,
         "resizable": true,
-        "title": "viewer-for-slack",
-        "width": 800,
-        "height": 600
+        "title": "Viewer for Slack",
+        "width": 1024
       }
     ]
   }
