@@ -3,8 +3,7 @@
     "beforeDevCommand": "npm run dev",
     "beforeBuildCommand": "npm run build",
     "devPath": "http://localhost:1420",
-    "distDir": "../dist",
-    "withGlobalTauri": false
+    "distDir": "../dist"
   },
   "package": {
     "productName": "viewer-for-slack",
@@ -22,10 +21,19 @@
       },
       "shell": {
         "open": true
+      },
+      "process": {
+        "exit": true
       }
     },
     "bundle": {
       "active": true,
+      "category": "DeveloperTool",
+      "copyright": "",
+      "deb": {
+        "depends": []
+      },
+      "externalBin": [],
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",
@@ -34,7 +42,22 @@
         "icons/icon.ico"
       ],
       "identifier": "net.aruse.viewer-for-slack",
-      "targets": "all"
+      "longDescription": "",
+      "macOS": {
+        "entitlements": null,
+        "exceptionDomain": "",
+        "frameworks": [],
+        "providerShortName": null,
+        "signingIdentity": null
+      },
+      "resources": [],
+      "shortDescription": "",
+      "targets": "all",
+      "windows": {
+        "certificateThumbprint": null,
+        "digestAlgorithm": "sha256",
+        "timestampUrl": ""
+      }
     },
     "security": {
       "csp": null
