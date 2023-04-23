@@ -1,10 +1,14 @@
 /** @jsxImportSource @emotion/react */
 import { jsx, css } from '@emotion/react';
-import { saveCredentials } from '../features/Credential';
+import {
+  convertAccessTokenToPayloadClaim,
+  valiateAccessToken,
+} from '../utils/AuthUtil';
 import { HttpStatusCode } from '@fnya/common-entity-for-slack/constant/HttpStatusCode';
 import { loadApp } from '../features/Load';
 import { login } from '../features/Login';
 import { process } from '@tauri-apps/api';
+import { saveCredentials } from '../features/Credential';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useUserStore } from '../stores/UserStore';
@@ -15,11 +19,13 @@ import Modal from 'react-bootstrap/Modal';
 import Spinner from 'react-bootstrap/Spinner';
 
 export const Login = () => {
-  // 定数
+  // 定数定義
   const INITIALIZE_FAILURE_ERROR_MESSAGE =
     'アプリケーションの初期化に失敗しました';
   const LOGIN_FAILURE_ERROR_MESSAGE =
     'ユーザー ID またはパスワードが異なります';
+  const INVALID_ACCESS_TOKEN_ERROR_MESSAGE =
+    'サーバーから受け取った情報が不正です';
   const SAVE_FAILURE_ERROR_MESSAGE = 'ログイン後処理に失敗しました';
   const UNEXPECTED_ERROR_MESSAGE = '予期せぬエラーが発生しました';
 
@@ -28,14 +34,16 @@ export const Login = () => {
   const setWebApiUrl = useUserStore((state) => state.setWebApiUrl);
   const setCountPerRequest = useUserStore((state) => state.setCountPerRequest);
   const setWorkSpaceName = useUserStore((state) => state.setWorkSpaceName);
-
-  // TODO: accessTokenExpires, isAdmin を実装
   const setUserId = useUserStore((state) => state.setUserId);
   const setAccessToken = useUserStore((state) => state.setAccessToken);
+  const setAccessTokenExpires = useUserStore(
+    (state) => state.setAccessTokenExpires
+  );
   const setRefreshToken = useUserStore((state) => state.setRefreshToken);
   const setRefreshTokenExpires = useUserStore(
     (state) => state.setRefreshTokenExpires
   );
+  const setIsAdmin = useUserStore((state) => state.setIsAdmin);
   const appName = useUserStore((state) => state.appName);
   const webApiUrl = useUserStore((state) => state.webApiUrl);
 
@@ -98,10 +106,29 @@ export const Login = () => {
       const result = await login(webApiUrl, email, password);
 
       if (result.httpStatusCode === HttpStatusCode.OK) {
+        try {
+          // JWTのアクセストークンを検証する
+          valiateAccessToken(appName, result.accessToken);
+        } catch (e) {
+          console.error(e);
+          setErrorMessage(INVALID_ACCESS_TOKEN_ERROR_MESSAGE);
+          setHasError(true);
+          setloginLoading(false);
+          return;
+        }
+
+        // JWT のアクセストークンからペイロードクレームを取得する
+        const payloadClaim = convertAccessTokenToPayloadClaim(
+          result.accessToken
+        );
+
+        // ユーザー情報を store に反映
         setUserId(result.userId);
         setAccessToken(result.accessToken);
         setRefreshToken(result.refreshToken);
         setRefreshTokenExpires(result.refreshTokenExpires);
+        setIsAdmin(payloadClaim.admin);
+        setAccessTokenExpires(payloadClaim.exp);
 
         // クレデンシャル保存
         try {
