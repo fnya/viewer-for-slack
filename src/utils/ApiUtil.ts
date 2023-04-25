@@ -18,5 +18,5 @@ export const post = async (url: string, request: string) => {
   // API 呼び出し
   const response = await axios.post(url, request, options);
 
-  return response;
+  return response.data;
 };

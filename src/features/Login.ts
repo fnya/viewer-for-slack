@@ -16,5 +16,5 @@ export const login = async (
   // API 呼び出し
   const response = await post(url, JSON.stringify(request));
 
-  return response.data as LoginResponse;
+  return response as LoginResponse;
 };

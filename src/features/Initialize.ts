@@ -17,7 +17,7 @@ export const initialize1st = async (
   // API 呼び出し
   const response = await post(url, JSON.stringify(request));
 
-  return response.data as InitializeUserResponse;
+  return response as InitializeUserResponse;
 };
 
 /**
@@ -41,5 +41,5 @@ export const initialize2nd = async (
   // API 呼び出し
   const response = await post(url, JSON.stringify(request));
 
-  return response.data as InitializeUserWithTokenResponse;
+  return response as InitializeUserWithTokenResponse;
 };

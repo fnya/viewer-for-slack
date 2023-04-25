@@ -1,5 +1,4 @@
 import { describe, test, beforeEach, expect } from '@jest/globals';
-import { mock, instance, when, deepEqual } from 'ts-mockito';
 import {
   splitPostText,
   splitBackQuote,
