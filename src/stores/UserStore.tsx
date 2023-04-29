@@ -6,84 +6,89 @@ import { MemberEntity } from '@fnya/common-entity-for-slack/entity/response/enti
  * ユーザー情報の Store 設定
  */
 export interface UserState {
-  appName: string;
-  webApiUrl: string;
-  countPerRequest: number;
-  workSpaceName: string;
-  userId: string;
   accessToken: string;
   accessTokenExpires: number;
-  refreshToken: string;
-  refreshTokenExpires: number;
+  appName: string;
+  channels: ChannelEntity[];
+  countPerRequest: number;
+  currentChannelId: string;
   initialized: boolean;
   isAdmin: boolean;
-  currentChannelId: string;
+  members: MemberEntity[];
+  refreshToken: string;
+  refreshTokenExpires: number;
   showMessages: boolean;
   showReplies: boolean;
-  channles: ChannelEntity[];
-  members: MemberEntity[];
-  setAppName: (name: string) => void;
-  setWebApiUrl: (webApiUrl: string) => void;
-  setCountPerRequest: (countPerRequest: number) => void;
-  setWorkSpaceName: (workSpaceName: string) => void;
-  setUserId: (userId: string) => void;
+  userId: string;
+  viewInitialized: boolean;
+  webApiUrl: string;
+  workSpaceName: string;
   setAccessToken: (accessToken: string) => void;
   setAccessTokenExpires: (accessTokenExpires: number) => void;
-  setRefreshToken: (refreshToken: string) => void;
-  setRefreshTokenExpires: (refreshTokenExpires: number) => void;
+  setAppName: (name: string) => void;
+  setChannels: (channles: ChannelEntity[]) => void;
+  setCountPerRequest: (countPerRequest: number) => void;
+  setCurrentChannelId: (currentChannelId: string) => void;
   setInitialized: (initialized: boolean) => void;
   setIsAdmin: (isAdmin: boolean) => void;
-  setCurrentChannelId: (currentChannelId: string) => void;
+  setMembers: (members: MemberEntity[]) => void;
+  setRefreshToken: (refreshToken: string) => void;
+  setRefreshTokenExpires: (refreshTokenExpires: number) => void;
   setShowMessages: (showMessages: boolean) => void;
   setShowReplies: (showReplies: boolean) => void;
-  setChannles: (channles: ChannelEntity[]) => void;
-  setMembers: (members: MemberEntity[]) => void;
+  setUserId: (userId: string) => void;
+  setViewInitialized: (initialized: boolean) => void;
+  setWebApiUrl: (webApiUrl: string) => void;
+  setWorkSpaceName: (workSpaceName: string) => void;
 }
 
 export const useUserStore = create<UserState>((set) => ({
-  appName: '',
-  webApiUrl: '',
-  countPerRequest: 0,
-  workSpaceName: '',
-  userId: '',
   accessToken: '',
   accessTokenExpires: 0,
-  refreshToken: '',
-  refreshTokenExpires: 0,
+  appName: '',
+  channels: [],
+  countPerRequest: 0,
+  currentChannelId: '',
   initialized: false,
   isAdmin: false,
-  currentChannelId: '',
+  members: [],
+  refreshToken: '',
+  refreshTokenExpires: 0,
   showMessages: false,
   showReplies: false,
-  channles: [],
-  members: [],
-  setAppName: (appName: string) => set((state) => ({ ...state, appName })),
-  setWebApiUrl: (webApiUrl: string) =>
-    set((state) => ({ ...state, webApiUrl })),
-  setCountPerRequest: (countPerRequest: number) =>
-    set((state) => ({ ...state, countPerRequest })),
-  setWorkSpaceName: (workSpaceName: string) =>
-    set((state) => ({ ...state, workSpaceName })),
-  setUserId: (userId: string) => set((state) => ({ ...state, userId })),
+  userId: '',
+  viewInitialized: false,
+  webApiUrl: '',
+  workSpaceName: '',
   setAccessToken: (accessToken: string) =>
     set((state) => ({ ...state, accessToken })),
   setAccessTokenExpires: (accessTokenExpires: number) =>
     set((state) => ({ ...state, accessTokenExpires })),
+  setAppName: (appName: string) => set((state) => ({ ...state, appName })),
+  setChannels: (channles: ChannelEntity[]) =>
+    set((state) => ({ ...state, channles })),
+  setCountPerRequest: (countPerRequest: number) =>
+    set((state) => ({ ...state, countPerRequest })),
+  setCurrentChannelId: (currentChannelId: string) =>
+    set((state) => ({ ...state, currentChannelId })),
+  setInitialized: (initialized: boolean) =>
+    set((state) => ({ ...state, initialized })),
+  setIsAdmin: (isAdmin: boolean) => set((state) => ({ ...state, isAdmin })),
+  setMembers: (members: MemberEntity[]) =>
+    set((state) => ({ ...state, members })),
   setRefreshToken: (refreshToken: string) =>
     set((state) => ({ ...state, refreshToken })),
   setRefreshTokenExpires: (refreshTokenExpires: number) =>
     set((state) => ({ ...state, refreshTokenExpires })),
-  setInitialized: (initialized: boolean) =>
-    set((state) => ({ ...state, initialized })),
-  setIsAdmin: (isAdmin: boolean) => set((state) => ({ ...state, isAdmin })),
-  setCurrentChannelId: (currentChannelId: string) =>
-    set((state) => ({ ...state, currentChannelId })),
   setShowMessages: (showMessages: boolean) =>
     set((state) => ({ ...state, showMessages })),
   setShowReplies: (showReplies: boolean) =>
     set((state) => ({ ...state, showReplies })),
-  setChannles: (channles: ChannelEntity[]) =>
-    set((state) => ({ ...state, channles })),
-  setMembers: (members: MemberEntity[]) =>
-    set((state) => ({ ...state, members })),
+  setUserId: (userId: string) => set((state) => ({ ...state, userId })),
+  setViewInitialized: (initialized: boolean) =>
+    set((state) => ({ ...state, viewInitialized: initialized })),
+  setWebApiUrl: (webApiUrl: string) =>
+    set((state) => ({ ...state, webApiUrl })),
+  setWorkSpaceName: (workSpaceName: string) =>
+    set((state) => ({ ...state, workSpaceName })),
 }));

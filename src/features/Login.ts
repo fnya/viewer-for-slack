@@ -5,6 +5,11 @@ import { RequestType } from '@fnya/common-entity-for-slack/constant/RequestType'
 
 /**
  * ログイン処理を行う
+ *
+ * @param url Web API URL
+ * @param email メールアドレス
+ * @param password パスワード
+ * @returns レスポンス
  */
 export const login = async (
   url: string,

@@ -7,6 +7,10 @@ import { RequestType } from '@fnya/common-entity-for-slack/constant/RequestType'
 
 /**
  * 初期化処理を行う(1回目)
+ *
+ * @param url Web API URL
+ * @param email メールアドレス
+ * @returns レスポンス
  */
 export const initialize1st = async (
   url: string,
@@ -22,6 +26,13 @@ export const initialize1st = async (
 
 /**
  * 初期化処理を行う(2回目)
+ *
+ * @param url Web API URL
+ * @param email メールアドレス
+ * @param password パスワード
+ * @param rePassword パスワード(確認用)
+ * @param token トークン
+ * @returns レスポンス
  */
 export const initialize2nd = async (
   url: string,
