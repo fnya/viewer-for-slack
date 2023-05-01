@@ -73,13 +73,7 @@ export const Viewer = () => {
     display: none;
   `;
 
-  const displayBlockStyle = css`
-    display: block;
-  `;
-
-  const loadingStyle = css`
-    // height: 92vh;
-  `;
+  const loadingStyle = css``;
 
   return (
     <>

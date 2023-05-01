@@ -28,10 +28,7 @@ export const Replies = (props: any) => {
     display: block;
   `;
 
-  const loadingStyle = css`
-    width: 100vw;
-    height: 100vh;
-  `;
+  const loadingStyle = css``;
 
   useEffect(() => {
     const loadReplies = async () => {
