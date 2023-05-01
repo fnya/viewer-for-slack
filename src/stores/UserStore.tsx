@@ -1,6 +1,7 @@
 import { ChannelEntity } from '@fnya/common-entity-for-slack/entity/response/entity/ChannelEntity';
 import { create } from 'zustand';
 import { MemberEntity } from '@fnya/common-entity-for-slack/entity/response/entity/MemberEntity';
+import { MesssageEntity } from '@fnya/common-entity-for-slack/entity/response/entity/MesssageEntity';
 
 /**
  * ユーザー情報の Store 設定
@@ -9,9 +10,9 @@ export interface UserState {
   accessToken: string;
   accessTokenExpires: number;
   appName: string;
-  channels: ChannelEntity[];
   countPerRequest: number;
-  currentChannelId: string;
+  currentChannel: ChannelEntity;
+  currentMessage: MesssageEntity;
   initialized: boolean;
   isAdmin: boolean;
   members: MemberEntity[];
@@ -26,9 +27,9 @@ export interface UserState {
   setAccessToken: (accessToken: string) => void;
   setAccessTokenExpires: (accessTokenExpires: number) => void;
   setAppName: (name: string) => void;
-  setChannels: (channles: ChannelEntity[]) => void;
   setCountPerRequest: (countPerRequest: number) => void;
-  setCurrentChannelId: (currentChannelId: string) => void;
+  setCurrentChannel: (currentChannel: ChannelEntity) => void;
+  setCurrentMessage: (currentMessage: MesssageEntity) => void;
   setInitialized: (initialized: boolean) => void;
   setIsAdmin: (isAdmin: boolean) => void;
   setMembers: (members: MemberEntity[]) => void;
@@ -46,9 +47,19 @@ export const useUserStore = create<UserState>((set) => ({
   accessToken: '',
   accessTokenExpires: 0,
   appName: '',
-  channels: [],
   countPerRequest: 0,
-  currentChannelId: '',
+  currentChannel: { id: '', name: '', isPrivate: false },
+  currentMessage: {
+    ts: '',
+    userId: '',
+    userName: '',
+    text: '',
+    replyCount: 0,
+    reactions: [],
+    files: [],
+    urls: [],
+    isEdited: false,
+  },
   initialized: false,
   isAdmin: false,
   members: [],
@@ -65,12 +76,12 @@ export const useUserStore = create<UserState>((set) => ({
   setAccessTokenExpires: (accessTokenExpires: number) =>
     set((state) => ({ ...state, accessTokenExpires })),
   setAppName: (appName: string) => set((state) => ({ ...state, appName })),
-  setChannels: (channles: ChannelEntity[]) =>
-    set((state) => ({ ...state, channles })),
   setCountPerRequest: (countPerRequest: number) =>
     set((state) => ({ ...state, countPerRequest })),
-  setCurrentChannelId: (currentChannelId: string) =>
-    set((state) => ({ ...state, currentChannelId })),
+  setCurrentChannel: (currentChannel: ChannelEntity) =>
+    set((state) => ({ ...state, currentChannel })),
+  setCurrentMessage: (currentMessage: MesssageEntity) =>
+    set((state) => ({ ...state, currentMessage })),
   setInitialized: (initialized: boolean) =>
     set((state) => ({ ...state, initialized })),
   setIsAdmin: (isAdmin: boolean) => set((state) => ({ ...state, isAdmin })),

@@ -1,7 +1,7 @@
 import { describe, test, beforeEach, expect } from '@jest/globals';
 import {
   splitPostText,
-  splitBackQuote,
+  splitCodeBlock,
   splitMention,
   fixMarkdownError,
   fixUrlError,
@@ -34,7 +34,7 @@ describe('StringUtil のテスト', () => {
     });
   });
 
-  describe('splitBackQuote のテスト', () => {
+  describe('splitCodeBlock のテスト', () => {
     test('コードブロックが単独の場合に正しく変換が行われること', () => {
       // 準備
       const text = `コードブロック単独マッチ\n\`\`\`\nコードブロックマッチ部分\n\`\`\`\nマッチ後`;
@@ -48,7 +48,7 @@ describe('StringUtil のテスト', () => {
       ];
 
       // 実行
-      const actual = splitBackQuote(text);
+      const actual = splitCodeBlock(text);
 
       // 検証
       expect(actual).toEqual(expected);
@@ -71,7 +71,7 @@ describe('StringUtil のテスト', () => {
       ];
 
       // 実行
-      const actual = splitBackQuote(text);
+      const actual = splitCodeBlock(text);
 
       // 検証
       expect(actual).toEqual(expected);

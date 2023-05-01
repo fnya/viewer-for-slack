@@ -7,9 +7,9 @@ import { useUserStore } from '../stores/UserStore';
 
 export const Channel = (props: any) => {
   // グローバル状態管理
-  const setCurrentChannelId = useUserStore(
-    (state) => state.setCurrentChannelId
-  );
+  const currentChannel = useUserStore((state) => state.currentChannel);
+  const setCurrentChannel = useUserStore((state) => state.setCurrentChannel);
+  const setShowReplies = useUserStore((state) => state.setShowReplies);
 
   // props
   const channel: ChannelEntity = props.channel;
@@ -25,8 +25,24 @@ export const Channel = (props: any) => {
       color: #ffffff;
       background-color: #350d36;
       border-radius: 6px;
+      cursor: pointer;
     }
   }`;
+
+  const selectedChannelStyle = css`
+    color: white;
+    background-color: #1164a3;
+    border-radius: 3px;
+    margin: 5px;
+    padding: 5px;
+
+    /** マウスオーバー時 */
+    :hover {
+      color: white;
+      background-color: #1164a3;
+      cursor: pointer;
+    }
+  `;
 
   const iconStyle = css`
     padding-right: 10px;
@@ -34,7 +50,14 @@ export const Channel = (props: any) => {
   }`;
 
   return (
-    <div css={channelStyle} onClick={() => setCurrentChannelId(channel.id)}>
+    <div
+      css={
+        channel.id === currentChannel.id ? selectedChannelStyle : channelStyle
+      }
+      onClick={() => {
+        setCurrentChannel(channel), setShowReplies(false);
+      }}
+    >
       {channel.isPrivate ? (
         <FontAwesomeIcon icon={faLock} css={iconStyle} />
       ) : (

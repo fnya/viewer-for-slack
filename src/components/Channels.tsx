@@ -1,21 +1,21 @@
 /** @jsxImportSource @emotion/react */
 import { jsx, css } from '@emotion/react';
 import { Channel } from './Channel';
+import { ChannelEntity } from '@fnya/common-entity-for-slack/entity/response/entity/ChannelEntity';
 import { getMembers } from '../features/Member';
 import { getUserChannels } from '../features/Channel';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useUserStore } from '../stores/UserStore';
 
 export const Channels = () => {
+  // ローカル状態管理
+  const [channels, setChannels] = useState<ChannelEntity[]>([]);
+
   // グローバル状態管理
   const accessToken = useUserStore((state) => state.accessToken);
-  const channels = useUserStore((state) => state.channels);
   const userId = useUserStore((state) => state.userId);
   const webApiUrl = useUserStore((state) => state.webApiUrl);
-  const setChannels = useUserStore((state) => state.setChannels);
-  const setCurrentChannelId = useUserStore(
-    (state) => state.setCurrentChannelId
-  );
+  const setCurrentChannel = useUserStore((state) => state.setCurrentChannel);
   const setMembers = useUserStore((state) => state.setMembers);
   const setViewInitialized = useUserStore((state) => state.setViewInitialized);
 
@@ -38,7 +38,7 @@ export const Channels = () => {
 
       // カレントチャンネル ID に先頭チャンネルの IDを設定する
       if (channelsResponse.channels.length > 0) {
-        setCurrentChannelId(channelsResponse.channels[0].id);
+        setCurrentChannel(channelsResponse.channels[0]);
       }
 
       console.log('チャンネル一覧を取得しました。');

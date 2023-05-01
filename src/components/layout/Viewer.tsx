@@ -34,11 +34,11 @@ export const Viewer = () => {
   `;
 
   const headerHeightStyle = css`
-    height: 4vh;
+    height: 6vh;
   `;
 
   const contentHeightStyle = css`
-    height: 96vh;
+    height: 94vh;
   `;
 
   const alignLeftStyle = css`
@@ -65,6 +65,10 @@ export const Viewer = () => {
     width: 20%;
   `;
 
+  const verticalStyle = css`
+    overflow: auto;
+  `;
+
   const noDisplayStyle = css`
     display: none;
   `;
@@ -74,96 +78,102 @@ export const Viewer = () => {
   `;
 
   const loadingStyle = css`
-    width: 100vw;
-    height: 100vh;
+    // height: 92vh;
   `;
 
-  return viewInitialized ? (
-    <Container css={containerStyle} fluid>
-      <Row>
-        <Col
-          xs={2}
-          css={[
-            alignLeftStyle,
-            boldStyle,
-            headerHeightStyle,
-            paddingZeroStyle,
-            sidebarWidth,
-            sideHeaderTheme,
-          ]}
-        >
-          <ChannelHeader />
-        </Col>
-        <Col
-          xs={showReplies ? 6 : undefined}
-          css={[
-            alignLeftStyle,
-            boldStyle,
-            bottomBorder,
-            headerHeightStyle,
-            paddingZeroStyle,
-          ]}
-        >
-          <MessageHeader />
-        </Col>
-        <Col
-          xs={showReplies ? undefined : 0}
-          css={
-            showReplies
-              ? [
-                  alignLeftStyle,
-                  bottomBorder,
-                  headerHeightStyle,
-                  leftBorder,
-                  paddingZeroStyle,
-                ]
-              : noDisplayStyle
-          }
-        >
-          <ReplyHeader />
-        </Col>
-      </Row>
-      <Row>
-        <Col
-          xs={2}
-          css={[
-            alignLeftStyle,
-            contentHeightStyle,
-            paddingZeroStyle,
-            sidebarWidth,
-            sideContentTheme,
-          ]}
-        >
-          <ChannelContent />
-        </Col>
-        <Col
-          xs={showReplies ? 6 : undefined}
-          css={[alignLeftStyle, contentHeightStyle, paddingZeroStyle]}
-        >
-          <MessageContent />
-        </Col>
-        <Col
-          xs={showReplies ? undefined : 0}
-          css={
-            showReplies
-              ? [
-                  alignLeftStyle,
-                  contentHeightStyle,
-                  leftBorder,
-                  paddingZeroStyle,
-                ]
-              : noDisplayStyle
-          }
-        >
-          <ReplyContent />
-        </Col>
-      </Row>
-    </Container>
-  ) : (
-    <div css={loadingStyle}>
-      <Spinner animation="border" role="status">
-        <span className="visually-hidden">Now loading...</span>
-      </Spinner>
-    </div>
+  return (
+    <>
+      <Container css={viewInitialized ? containerStyle : noDisplayStyle} fluid>
+        <Row>
+          <Col
+            xs={2}
+            css={[
+              alignLeftStyle,
+              boldStyle,
+              headerHeightStyle,
+              paddingZeroStyle,
+              sidebarWidth,
+              sideHeaderTheme,
+            ]}
+          >
+            <ChannelHeader />
+          </Col>
+          <Col
+            xs={showReplies ? 6 : undefined}
+            css={[
+              alignLeftStyle,
+              boldStyle,
+              bottomBorder,
+              headerHeightStyle,
+              paddingZeroStyle,
+            ]}
+          >
+            <MessageHeader />
+          </Col>
+          <Col
+            xs={showReplies ? undefined : 0}
+            css={
+              showReplies
+                ? [
+                    alignLeftStyle,
+                    bottomBorder,
+                    headerHeightStyle,
+                    leftBorder,
+                    paddingZeroStyle,
+                  ]
+                : noDisplayStyle
+            }
+          >
+            <ReplyHeader />
+          </Col>
+        </Row>
+        <Row>
+          <Col
+            xs={2}
+            css={[
+              alignLeftStyle,
+              contentHeightStyle,
+              paddingZeroStyle,
+              sidebarWidth,
+              sideContentTheme,
+            ]}
+          >
+            <ChannelContent />
+          </Col>
+          <Col
+            xs={showReplies ? 6 : undefined}
+            css={[
+              alignLeftStyle,
+              contentHeightStyle,
+              paddingZeroStyle,
+              verticalStyle,
+            ]}
+          >
+            <MessageContent />
+          </Col>
+          <Col
+            xs={showReplies ? undefined : 0}
+            css={
+              showReplies
+                ? [
+                    alignLeftStyle,
+                    contentHeightStyle,
+                    leftBorder,
+                    paddingZeroStyle,
+                    verticalStyle,
+                  ]
+                : noDisplayStyle
+            }
+          >
+            <ReplyContent />
+          </Col>
+        </Row>
+      </Container>
+      <div css={viewInitialized ? noDisplayStyle : loadingStyle}>
+        <Spinner animation="border" role="status">
+          <span className="visually-hidden">Now loading...</span>
+        </Spinner>
+      </div>
+    </>
   );
 };
