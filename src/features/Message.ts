@@ -16,14 +16,27 @@ export const getMessages = async (
   url: string,
   channelId: string,
   accessToken: string,
-  countPerRequest: number
+  countPerRequest: number,
+  oldestTs?: string
 ): Promise<GetMessagesResponse> => {
-  const request = new GetMessagesRequest(
-    RequestType.GetMessages,
-    channelId,
-    accessToken,
-    String(countPerRequest)
-  );
+  let request: GetMessagesRequest;
+
+  if (oldestTs && oldestTs !== '') {
+    request = new GetMessagesRequest(
+      RequestType.GetMessages,
+      channelId,
+      accessToken,
+      String(countPerRequest),
+      oldestTs
+    );
+  } else {
+    request = new GetMessagesRequest(
+      RequestType.GetMessages,
+      channelId,
+      accessToken,
+      String(countPerRequest)
+    );
+  }
 
   // API 呼び出し
   const response = await post(url, JSON.stringify(request));
