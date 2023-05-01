@@ -5,6 +5,7 @@ import { DateTime } from './parts/DateTime';
 import { Edited } from './parts/Edited';
 import { ReplyEntity } from '@fnya/common-entity-for-slack/entity/response/entity/ReplyEntity';
 import { User } from './parts/User';
+import { Files } from './parts/Files';
 
 export const Reply = (props: any) => {
   // props
@@ -37,6 +38,8 @@ export const Reply = (props: any) => {
       {convertTextToElements(reply.text, reply.ts)}
 
       <Edited edited={reply.isEdited} />
+
+      <Files files={reply.files} />
     </div>
   );
 };

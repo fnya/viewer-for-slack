@@ -3,6 +3,7 @@ import { jsx, css } from '@emotion/react';
 import { convertTextToElements } from '../utils/ElementUtil';
 import { DateTime } from './parts/DateTime';
 import { Edited } from './parts/Edited';
+import { Files } from './parts/Files';
 import { MesssageEntity } from '@fnya/common-entity-for-slack/entity/response/entity/MesssageEntity';
 import { ReplyCount } from './parts/ReplyCount';
 import { User } from './parts/User';
@@ -43,6 +44,9 @@ export const Message = (props: any) => {
       {convertTextToElements(message.text, message.ts)}
 
       <Edited edited={message.isEdited} />
+
+      <Files files={message.files} />
+
       <ReplyCount
         message={message}
         onClick={() => {
