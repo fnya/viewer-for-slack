@@ -3,57 +3,105 @@ use serde::{Deserialize, Serialize};
 use serde_json;
 use whoami;
 
+const SERVICE_NAME: &str = "Viewer for Slack";
+
 #[derive(Debug, Deserialize, Serialize)]
 #[allow(non_snake_case)]
 pub struct UserInformation {
     pub userId: String,
     pub refreshToken: String,
     pub refreshTokenExpires: i32,
-    pub initialized: bool,
+    pub userInitialized: bool,
     pub isAdmin: bool,
+    pub appName: String,
+    pub webApiUrl: String,
+    pub countPerRequest: i32,
+    pub workSpaceName: String,
 }
 
 /**
  * クレデンシャルを保存する
  */
+#[allow(non_snake_case)]
 pub fn save_credentials(
-    user_id: String,
-    refresh_token: String,
-    refresh_token_expires: i32,
-    initialized: bool,
-    is_admin: bool,
-    service_name: String,
-) {
+    userId: String,
+    refreshToken: String,
+    refreshTokenExpires: i32,
+    userInitialized: bool,
+    isAdmin: bool,
+    appName: String,
+    webApiUrl: String,
+    countPerRequest: i32,
+    workSpaceName: String,
+) -> String {
     let user_information = UserInformation {
-        userId: user_id,
-        refreshToken: refresh_token,
-        refreshTokenExpires: refresh_token_expires,
-        initialized,
-        isAdmin: is_admin,
+        userId,
+        refreshToken,
+        refreshTokenExpires,
+        userInitialized,
+        isAdmin,
+        appName,
+        webApiUrl,
+        countPerRequest,
+        workSpaceName,
     };
 
-    let user_name = whoami::username(); // OSのユーザー名を取得する
+    // OSのユーザー名を取得する
+    let user_name = whoami::username();
 
-    let credentials = &serde_json::to_string(&user_information).expect("error");
+    // 保存用文字列を作成する
+    let credentials = &serde_json::to_string(&user_information);
+    let credentials = match credentials {
+        Ok(credentials) => credentials,
+        Err(_) => {
+            return String::from("error");
+        }
+    };
 
     // 生成
-    let entry = keyring::Entry::new(&service_name, &user_name).expect("error");
+    let entry = keyring::Entry::new(&SERVICE_NAME, &user_name);
+    let entry = match entry {
+        Ok(entry) => entry,
+        Err(_) => {
+            return String::from("error");
+        }
+    };
 
     // 保存
-    entry.set_password(&credentials).expect("error");
+    let save = entry.set_password(&credentials);
+    let save = match save {
+        Ok(_) => "ok",
+        Err(_) => "error",
+    };
+
+    save.to_string()
 }
 
 /**
  * クレデンシャルを読み込む
  */
-pub fn load_credentials(service_name: String) -> String {
-    let user_name = whoami::username(); // OSのユーザー名を取得する
+#[allow(non_snake_case)]
+pub fn load_credentials() -> String {
+    // OSのユーザー名を取得する
+    let user_name = whoami::username();
 
     // 生成
-    let entry = keyring::Entry::new(&service_name, &user_name).expect("error");
+    let entry = keyring::Entry::new(&SERVICE_NAME, &user_name);
+    let entry = match entry {
+        Ok(entry) => entry,
+        Err(_) => {
+            return String::from("error");
+        }
+    };
 
     // 読み込み
-    let credentials = entry.get_password().expect("error");
+    let credentials = entry.get_password();
+    let credentials = match credentials {
+        Ok(credentials) => credentials,
+        Err(_) => {
+            return String::from("error");
+        }
+    };
 
     credentials
 }

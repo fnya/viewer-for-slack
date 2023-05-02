@@ -2,7 +2,7 @@
 import { jsx, css } from '@emotion/react';
 import { FileEntity } from '@fnya/common-entity-for-slack/entity/response/entity/FileEntity';
 import { getBlob } from '../../features/Blob';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useUserStore } from '../../stores/UserStore';
 import { writeBinaryFile, BaseDirectory } from '@tauri-apps/api/fs';
 import Alert from 'react-bootstrap/Alert';

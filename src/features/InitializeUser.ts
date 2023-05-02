@@ -6,13 +6,13 @@ import { post } from '../utils/ApiUtil';
 import { RequestType } from '@fnya/common-entity-for-slack/constant/RequestType';
 
 /**
- * 初期化処理を行う(1回目)
+ * ユーザー初期化処理を行う(1回目)
  *
  * @param url Web API URL
  * @param email メールアドレス
  * @returns レスポンス
  */
-export const initialize1st = async (
+export const initializeUser1st = async (
   url: string,
   email: string
 ): Promise<InitializeUserResponse> => {
@@ -25,7 +25,7 @@ export const initialize1st = async (
 };
 
 /**
- * 初期化処理を行う(2回目)
+ * ユーザー初期化処理を行う(2回目)
  *
  * @param url Web API URL
  * @param email メールアドレス
@@ -34,7 +34,7 @@ export const initialize1st = async (
  * @param token トークン
  * @returns レスポンス
  */
-export const initialize2nd = async (
+export const initializeUser2nd = async (
   url: string,
   email: string,
   password: string,

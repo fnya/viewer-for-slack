@@ -1,7 +1,7 @@
 import { describe, test, beforeEach, expect, jest } from '@jest/globals';
 import { HttpStatus } from '@fnya/common-entity-for-slack/constant/HttpStatus';
 import { HttpStatusCode } from '@fnya/common-entity-for-slack/constant/HttpStatusCode';
-import { initialize1st, initialize2nd } from '../../features/Initialize';
+import { initialize1st, initialize2nd } from '../../features/InitializeUser';
 import * as api from '../../utils/ApiUtil';
 
 describe('Initialize のテスト', () => {

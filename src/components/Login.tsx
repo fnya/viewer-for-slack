@@ -5,23 +5,21 @@ import {
   valiateAccessToken,
 } from '../utils/AuthUtil';
 import { HttpStatusCode } from '@fnya/common-entity-for-slack/constant/HttpStatusCode';
-import { loadApp } from '../features/Load';
 import { login } from '../features/Login';
 import { process } from '@tauri-apps/api';
 import { saveCredentials } from '../features/Credential';
 import { useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useUserStore } from '../stores/UserStore';
 import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import Spinner from 'react-bootstrap/Spinner';
+import { LoginResponse } from '@fnya/common-entity-for-slack/entity/response/LoginResponse';
 
 export const Login = () => {
   // 定数定義
-  const INITIALIZE_FAILURE_ERROR_MESSAGE =
-    'アプリケーションの初期化に失敗しました';
   const LOGIN_FAILURE_ERROR_MESSAGE =
     'メールアドレスまたはパスワードが異なります';
   const INVALID_ACCESS_TOKEN_ERROR_MESSAGE =
@@ -31,11 +29,11 @@ export const Login = () => {
   const REQUIRE_EMAIL_ERROR_MESSAGE = 'メールアドレスを入力してください';
   const REQUIRE_PASSWORD_ERROR_MESSAGE = 'パスワードを入力してください';
 
-  // store の定義を取得
-  const setAppName = useUserStore((state) => state.setAppName);
-  const setWebApiUrl = useUserStore((state) => state.setWebApiUrl);
-  const setCountPerRequest = useUserStore((state) => state.setCountPerRequest);
-  const setWorkSpaceName = useUserStore((state) => state.setWorkSpaceName);
+  // グローバル状態管理
+  const appName = useUserStore((state) => state.appName);
+  const countPerRequest = useUserStore((state) => state.countPerRequest);
+  const webApiUrl = useUserStore((state) => state.webApiUrl);
+  const workSpaceName = useUserStore((state) => state.workSpaceName);
   const setUserId = useUserStore((state) => state.setUserId);
   const setAccessToken = useUserStore((state) => state.setAccessToken);
   const setAccessTokenExpires = useUserStore(
@@ -46,11 +44,8 @@ export const Login = () => {
     (state) => state.setRefreshTokenExpires
   );
   const setIsAdmin = useUserStore((state) => state.setIsAdmin);
-  const appName = useUserStore((state) => state.appName);
-  const webApiUrl = useUserStore((state) => state.webApiUrl);
 
-  // ローカルの state を定義
-  const [loaded, setLoaded] = useState(true);
+  // ローカル状態管理
   const [loginLoading, setloginLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -66,35 +61,6 @@ export const Login = () => {
   const exit = () => {
     process.exit(0);
   };
-
-  // 起動時にアプリの設定をロードして store に反映する
-  useEffect(() => {
-    const load = async () => {
-      setLoaded(false);
-      setHasError(false);
-      setErrorMessage('');
-
-      try {
-        // アプリ設定の読み込み
-        const appConfig = await loadApp();
-
-        // アプリ設定を store に反映
-        setAppName(appConfig.name);
-        setWebApiUrl(appConfig.url);
-        setCountPerRequest(appConfig.countPerRequest);
-        setWorkSpaceName(appConfig.workSpaceName);
-      } catch (e: any) {
-        console.error(e);
-        setErrorMessage(INITIALIZE_FAILURE_ERROR_MESSAGE);
-        setHasError(true);
-        console.error(INITIALIZE_FAILURE_ERROR_MESSAGE);
-      }
-
-      setLoaded(true);
-    };
-
-    void load();
-  }, []);
 
   // ログイン処理
   const myLogin = async () => {
@@ -115,74 +81,78 @@ export const Login = () => {
     setHasError(false);
     setErrorMessage('');
 
+    // ログイン処理
+    let result: LoginResponse;
+
     try {
-      // ログイン処理
-      const result = await login(webApiUrl, email, password);
-
-      if (result.httpStatusCode === HttpStatusCode.OK) {
-        try {
-          // JWTのアクセストークンを検証する
-          valiateAccessToken(appName, result.accessToken);
-        } catch (e) {
-          console.error(e);
-          setErrorMessage(INVALID_ACCESS_TOKEN_ERROR_MESSAGE);
-          setHasError(true);
-          setloginLoading(false);
-          return;
-        }
-
-        // JWT のアクセストークンからペイロードクレームを取得する
-        const payloadClaim = convertAccessTokenToPayloadClaim(
-          result.accessToken
-        );
-
-        // ユーザー情報を store に反映
-        setUserId(result.userId);
-        setAccessToken(result.accessToken);
-        setRefreshToken(result.refreshToken);
-        setRefreshTokenExpires(result.refreshTokenExpires);
-        setIsAdmin(payloadClaim.admin);
-        setAccessTokenExpires(payloadClaim.exp);
-
-        // クレデンシャル保存
-        try {
-          await saveCredentials(
-            result.userId,
-            result.refreshToken,
-            result.refreshTokenExpires,
-            true,
-            payloadClaim.admin,
-            appName
-          );
-
-          // 画面遷移
-          navigate('/viewer');
-        } catch (e) {
-          console.error(e);
-          setErrorMessage(SAVE_FAILURE_ERROR_MESSAGE);
-          setHasError(true);
-        }
-      } else {
-        setErrorMessage(LOGIN_FAILURE_ERROR_MESSAGE);
-        setHasError(true);
-        console.error(LOGIN_FAILURE_ERROR_MESSAGE);
-      }
-
-      setloginLoading(false);
+      result = await login(webApiUrl, email, password);
     } catch (e: any) {
       console.error(e);
       setErrorMessage(UNEXPECTED_ERROR_MESSAGE);
       setHasError(true);
       setloginLoading(false);
+      return;
     }
-  };
 
-  /**
-   * ユーザーの初期化画面に遷移する
-   */
-  const moveToInitialize = () => {
-    // 画面遷移
-    navigate('/initialize');
+    if (result.httpStatusCode === HttpStatusCode.UNAUTHORIZED) {
+      setErrorMessage(LOGIN_FAILURE_ERROR_MESSAGE);
+      setHasError(true);
+      setloginLoading(false);
+      return;
+    }
+
+    if (result.httpStatusCode !== HttpStatusCode.OK) {
+      setErrorMessage(UNEXPECTED_ERROR_MESSAGE);
+      setHasError(true);
+      setloginLoading(false);
+      return;
+    }
+
+    try {
+      // JWTのアクセストークンを検証する
+      valiateAccessToken(appName, result.accessToken);
+    } catch (e) {
+      console.error(e);
+      setErrorMessage(INVALID_ACCESS_TOKEN_ERROR_MESSAGE);
+      setHasError(true);
+      setloginLoading(false);
+      return;
+    }
+
+    // JWT のアクセストークンからペイロードクレームを取得する
+    const payloadClaim = convertAccessTokenToPayloadClaim(result.accessToken);
+
+    // ユーザー情報を store に反映
+    setUserId(result.userId);
+    setAccessToken(result.accessToken);
+    setAccessTokenExpires(payloadClaim.exp);
+    setRefreshToken(result.refreshToken);
+    setRefreshTokenExpires(result.refreshTokenExpires);
+    setIsAdmin(payloadClaim.admin);
+
+    // クレデンシャル保存
+    const saveResult = (await saveCredentials(
+      result.userId,
+      result.refreshToken,
+      result.refreshTokenExpires,
+      true,
+      payloadClaim.admin,
+      appName,
+      webApiUrl,
+      countPerRequest,
+      workSpaceName
+    )) as string;
+
+    if (saveResult === 'ok') {
+      // 画面遷移
+      navigate('/viewer');
+    } else {
+      console.error(SAVE_FAILURE_ERROR_MESSAGE);
+      setErrorMessage(SAVE_FAILURE_ERROR_MESSAGE);
+      setHasError(true);
+    }
+
+    setloginLoading(false);
   };
 
   // css
@@ -204,13 +174,7 @@ export const Login = () => {
     background-color: #1164a3;
   `;
 
-  const footerStyle = css``;
-
-  const linkButtonStyle = css``;
-
-  const buttonStyle = css``;
-
-  return loaded ? (
+  return (
     <>
       <Modal
         show={true}
@@ -247,25 +211,16 @@ export const Login = () => {
             disabled={loginLoading}
           />
         </Modal.Body>
-        <Modal.Footer css={footerStyle}>
-          <Button
-            variant="link"
-            onClick={() => moveToInitialize()}
-            disabled={loginLoading}
-            css={linkButtonStyle}
-          >
-            ユーザーの初期化へ
-          </Button>
+        <Modal.Footer>
           <Button
             variant="secondary"
             onClick={() => exit()}
             disabled={loginLoading}
-            css={buttonStyle}
           >
             閉じる
           </Button>
           <Button
-            css={[loginButtonColor, buttonStyle]}
+            css={loginButtonColor}
             disabled={loginLoading}
             onClick={() => myLogin()}
           >
@@ -274,9 +229,5 @@ export const Login = () => {
         </Modal.Footer>
       </Modal>
     </>
-  ) : (
-    <Spinner animation="border" role="status">
-      <span className="visually-hidden">Loading...</span>
-    </Spinner>
   );
 };

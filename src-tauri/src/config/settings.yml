@@ -1,4 +1,0 @@
-name: 'Viewer for Slack(tophills.com)'
-url: 'https://script.google.com/macros/s/AKfycbzMuWNDonK8lJX-cd6ZkleUh7E294u-GJkoLXHpwvrFTZHC6lXPa5-2u_HslVFajkYt6w/exec' # GASのURL
-countPerRequest: 10 # 1回のリクエストで取得する件数
-workSpaceName: 'WorkSpaceName' # ワークスペース名
