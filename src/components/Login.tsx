@@ -6,6 +6,7 @@ import {
 } from '../utils/AuthUtil';
 import { HttpStatusCode } from '@fnya/common-entity-for-slack/constant/HttpStatusCode';
 import { login } from '../features/Login';
+import { LoginResponse } from '@fnya/common-entity-for-slack/entity/response/LoginResponse';
 import { process } from '@tauri-apps/api';
 import { saveCredentials } from '../features/Credential';
 import { useNavigate } from 'react-router-dom';
@@ -16,7 +17,6 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import Spinner from 'react-bootstrap/Spinner';
-import { LoginResponse } from '@fnya/common-entity-for-slack/entity/response/LoginResponse';
 
 export const Login = () => {
   // 定数定義
@@ -94,7 +94,7 @@ export const Login = () => {
       return;
     }
 
-    if (result.httpStatusCode === HttpStatusCode.UNAUTHORIZED) {
+    if (result.httpStatusCode === HttpStatusCode.FORBIDDEN) {
       setErrorMessage(LOGIN_FAILURE_ERROR_MESSAGE);
       setHasError(true);
       setloginLoading(false);
@@ -122,10 +122,10 @@ export const Login = () => {
     // JWT のアクセストークンからペイロードクレームを取得する
     const payloadClaim = convertAccessTokenToPayloadClaim(result.accessToken);
 
-    // ユーザー情報を store に反映
+    // ユーザー情報をグローバル状態管理に保存
     setUserId(result.userId);
     setAccessToken(result.accessToken);
-    setAccessTokenExpires(payloadClaim.exp);
+    setAccessTokenExpires(result.accessTokenExpires);
     setRefreshToken(result.refreshToken);
     setRefreshTokenExpires(result.refreshTokenExpires);
     setIsAdmin(payloadClaim.admin);

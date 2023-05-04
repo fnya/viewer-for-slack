@@ -13,11 +13,6 @@ export const CodeBlock = (props: any) => {
     width: 98%;
   `;
 
-  // 前後の ``` を削除する
-  const removeMarkdown = (text: string) => {
-    return text.substring(3).slice(0, -3);
-  };
-
   return (
     <ReactMarkdown
       linkTarget="_blank"
@@ -26,7 +21,7 @@ export const CodeBlock = (props: any) => {
       key={props.codeBlockKey}
       components={{ p: 'span' }}
     >
-      {removeMarkdown(props.text)}
+      {props.text}
     </ReactMarkdown>
   );
 };

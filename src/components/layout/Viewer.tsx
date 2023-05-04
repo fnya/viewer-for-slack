@@ -7,6 +7,7 @@ import { MessageHeader } from './MessageHeader';
 import { ReplyContent } from './ReplyContent';
 import { ReplyHeader } from './ReplyHeader';
 import { useUserStore } from '../../stores/UserStore';
+import Alert from 'react-bootstrap/Alert';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -14,8 +15,9 @@ import Spinner from 'react-bootstrap/Spinner';
 
 export const Viewer = () => {
   // グローバル状態管理
-  const viewInitialized = useUserStore((state) => state.viewInitialized);
+  const errorMessage = useUserStore((state) => state.errorMessage);
   const showReplies = useUserStore((state) => state.showReplies);
+  const viewInitialized = useUserStore((state) => state.viewInitialized);
 
   // css
   const containerStyle = css`
@@ -75,7 +77,7 @@ export const Viewer = () => {
 
   const loadingStyle = css``;
 
-  return (
+  return errorMessage === '' ? (
     <>
       <Container css={viewInitialized ? containerStyle : noDisplayStyle} fluid>
         <Row>
@@ -169,5 +171,7 @@ export const Viewer = () => {
         </Spinner>
       </div>
     </>
+  ) : (
+    <Alert variant="danger">{errorMessage}</Alert>
   );
 };

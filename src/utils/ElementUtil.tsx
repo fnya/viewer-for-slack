@@ -1,35 +1,19 @@
 /** @jsxImportSource @emotion/react */
 import { jsx, css } from '@emotion/react';
-import { splitPostText } from './StringUtil';
 import { Code } from '../components/parts/Code';
 import { CodeBlock } from '../components/parts/CodeBlock';
+import { EmotionJSX } from '@emotion/react/types/jsx-namespace';
 import { Mention } from '../components/parts/Mention';
+import { splitPostText } from './StringUtil';
+import { TextType } from '../constants/TextType';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw'; // HTML パーサー
-import { TextType } from '../types/TextType';
-import { EmotionJSX } from '@emotion/react/types/jsx-namespace';
 
 // css
 const markdownStyle = css`
   text-align: left;
   white-space: pre-line; /* 改行を反映 */
   display: inline;
-`;
-
-const messageStyle = css`
-  margin: 8px;
-  border-bottom: 1px solid #e6e6fa;
-  width: 98%;
-  padding-bottom: 20px;
-
-  :hover {
-    background-color: #f5f5f5;
-    border-radius: 6px;
-  }
-`;
-
-const messageHeader = css`
-  display: flex;
 `;
 
 /**

@@ -1,5 +1,5 @@
 import { Text } from '../types/Text';
-import { TextType } from '../types/TextType';
+import { TextType } from '../constants/TextType';
 
 /**
  * 投稿を分割する
@@ -33,8 +33,6 @@ export const splitCodeBlock = (text: string): Text[] => {
   if (matches) {
     let startIndex = 0;
 
-    // TODO: BlockQuote が複数ある場合はうまくいかない
-
     matches.forEach((r) => {
       const matchIndex = text.indexOf(r);
 
@@ -45,7 +43,12 @@ export const splitCodeBlock = (text: string): Text[] => {
           textType: TextType.Normal,
         });
       }
-      result.push({ text: r, textType: TextType.CodeBlock });
+
+      // 配列に追加する(前後の```を削除する)
+      result.push({
+        text: r.substring(3).slice(0, -3),
+        textType: TextType.CodeBlock,
+      });
 
       startIndex = matchIndex + r.length;
     });
@@ -64,6 +67,12 @@ export const splitCodeBlock = (text: string): Text[] => {
   return result;
 };
 
+/**
+ * 投稿のコードを分割する
+ *
+ * @param texts 投稿
+ * @returns 分割後の投稿
+ */
 export const splitCode = (texts: Text[]): Text[] => {
   // Code を抽出する正規表現
   const regex = /(`([\w\s]|[ -/:-@[-`{-~]|[^\x01-\x7E\uFF61-\uFF9F])+?`)+/g;
@@ -93,8 +102,11 @@ export const splitCode = (texts: Text[]): Text[] => {
           });
         }
 
-        // 配列に追加する
-        result.push({ text: r, textType: TextType.Code });
+        // 配列に追加する(前後の`を削除する)
+        result.push({
+          text: r.substring(1).slice(0, -1),
+          textType: TextType.Code,
+        });
 
         startIndex = startIndex + matchIndex + r.length;
       });

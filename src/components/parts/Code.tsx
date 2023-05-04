@@ -11,14 +11,9 @@ export const Code = (props: any) => {
     display: inline;
   `;
 
-  // 前後の ` を削除する
-  const removeMarkdown = (text: string) => {
-    return text.substring(1).slice(0, -1);
-  };
-
   return (
     <span key={props.codeKey} css={codeStyle}>
-      {removeMarkdown(props.text)}
+      {props.text}
     </span>
   );
 };

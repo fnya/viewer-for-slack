@@ -5,8 +5,9 @@ import {
   splitMention,
   fixMarkdownError,
   fixUrlError,
+  splitCode,
 } from '../../utils/StringUtil';
-import { TextType } from '../../types/TextType';
+import { TextType } from '../../constants/TextType';
 
 describe('StringUtil のテスト', () => {
   describe('splitPostText のテスト', () => {
@@ -17,7 +18,7 @@ describe('StringUtil のテスト', () => {
         { text: `<!channel>`, textType: TextType.Mention },
         { text: ` `, textType: TextType.Normal },
         {
-          text: `\`\`\`コードブロック\`\`\``,
+          text: `コードブロック`,
           textType: TextType.CodeBlock,
         },
         {
@@ -41,7 +42,7 @@ describe('StringUtil のテスト', () => {
       const expected = [
         { text: `コードブロック単独マッチ\n`, textType: TextType.Normal },
         {
-          text: `\`\`\`\nコードブロックマッチ部分\n\`\`\``,
+          text: `\nコードブロックマッチ部分\n`,
           textType: TextType.CodeBlock,
         },
         { text: `\nマッチ後`, textType: TextType.Normal },
@@ -60,14 +61,28 @@ describe('StringUtil のテスト', () => {
       const expected = [
         { text: `コードブロック単独マッチ\n`, textType: TextType.Normal },
         {
-          text: `\`\`\`\nコードブロックマッチ部分\n\`\`\``,
+          text: `\nコードブロックマッチ部分\n`,
           textType: TextType.CodeBlock,
         },
         { text: `\nマッチ後`, textType: TextType.Normal },
         {
-          text: `\`\`\`\nコードブロック2つ目のマッチ部分\n\`\`\``,
+          text: `\nコードブロック2つ目のマッチ部分\n`,
           textType: TextType.CodeBlock,
         },
+      ];
+
+      // 実行
+      const actual = splitCodeBlock(text);
+
+      // 検証
+      expect(actual).toEqual(expected);
+    });
+
+    test('コードブロックが存在しない場合は Normal が作成されること', () => {
+      // 準備
+      const text = `コードブロックなし`;
+      const expected = [
+        { text: `コードブロックなし`, textType: TextType.Normal },
       ];
 
       // 実行
@@ -153,6 +168,49 @@ describe('StringUtil のテスト', () => {
     });
   });
 
+  describe('splitCode のテスト', () => {
+    test('コードが正しく分割される', () => {
+      // 準備
+      const text = [
+        {
+          text: `コード以外1\`コード1\`\n\n\nコード以外2\`コード2\`コード以外3`,
+          textType: TextType.Normal,
+        },
+        { text: `コードなし`, textType: TextType.Normal },
+      ];
+
+      const expected = [
+        {
+          text: `コード以外1`,
+          textType: TextType.Normal,
+        },
+        {
+          text: `コード1`,
+          textType: TextType.Code,
+        },
+        {
+          text: `\n\n\nコード以外2`,
+          textType: TextType.Normal,
+        },
+        {
+          text: `コード2`,
+          textType: TextType.Code,
+        },
+        {
+          text: `コード以外3`,
+          textType: TextType.Normal,
+        },
+        { text: `コードなし`, textType: TextType.Normal },
+      ];
+
+      // 実行
+      const actual = splitCode(text);
+
+      // 検証
+      expect(actual).toEqual(expected);
+    });
+  });
+
   describe('fixMarkdownError のテスト', () => {
     test('Markdown のエラー対応が正しく行われること', () => {
       // 準備
@@ -161,7 +219,6 @@ describe('StringUtil のテスト', () => {
           text: `=== == =\n--- -- -\n1.ABC\n 2. CDE`,
           textType: TextType.Normal,
         },
-
         {
           text: `<@UABCDE01234>`,
           textType: TextType.Mention,
@@ -170,11 +227,27 @@ describe('StringUtil のテスト', () => {
           text: `\`\`\`コードブロックマッチ部分\`\`\``,
           textType: TextType.CodeBlock,
         },
+        {
+          text: `**Normal`,
+          textType: TextType.Normal,
+        },
+        {
+          text: `Normal**`,
+          textType: TextType.Normal,
+        },
+        {
+          text: `*Normal`,
+          textType: TextType.Normal,
+        },
+        {
+          text: `Normal*`,
+          textType: TextType.Normal,
+        },
         { text: `変換対象外`, textType: TextType.Normal },
       ];
       const expected = [
         {
-          text: `＝ ＝ =\nー ー -\n_1.ABC\n _2. CDE`,
+          text: `＝ ＝ =\nー ー -\n1.ABC\n _2.CDE`,
           textType: TextType.Normal,
         },
         {
@@ -184,6 +257,22 @@ describe('StringUtil のテスト', () => {
         {
           text: `\`\`\`コードブロックマッチ部分\`\`\``,
           textType: TextType.CodeBlock,
+        },
+        {
+          text: `Normal`,
+          textType: TextType.Normal,
+        },
+        {
+          text: `Normal`,
+          textType: TextType.Normal,
+        },
+        {
+          text: `Normal`,
+          textType: TextType.Normal,
+        },
+        {
+          text: `Normal`,
+          textType: TextType.Normal,
         },
         { text: `変換対象外`, textType: TextType.Normal },
       ];

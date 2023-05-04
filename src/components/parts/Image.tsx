@@ -2,7 +2,10 @@
 import { jsx, css } from '@emotion/react';
 import { FileEntity } from '@fnya/common-entity-for-slack/entity/response/entity/FileEntity';
 import { getBlob } from '../../features/Blob';
+import { GetBlobResponse } from '@fnya/common-entity-for-slack/entity/response/GetBlobResponse';
+import { refreshAccessToken } from '../../utils/AuthUtil';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '../../stores/UserStore';
 import base64js from 'base64-js';
 import Image from 'react-bootstrap/Image';
@@ -10,15 +13,32 @@ import Modal from 'react-bootstrap/Modal';
 import Spinner from 'react-bootstrap/Spinner';
 
 export const MyImage = (props: any) => {
+  // 定数
+  const GET_BLOB_ERROR_MESSAGE = '画像の取得に失敗しました。';
+
   // ローカル状態管理
   const [imageUrl, setImageUrl] = useState('');
   const [showImage, setShowImage] = useState(false);
 
   // グローバル状態管理
-  const webApiUrl = useUserStore((state) => state.webApiUrl);
   const accessToken = useUserStore((state) => state.accessToken);
+  const accessTokenExpires = useUserStore((state) => state.accessTokenExpires);
+  const appName = useUserStore((state) => state.appName);
   const currentChannel = useUserStore((state) => state.currentChannel);
+  const refreshToken = useUserStore((state) => state.refreshToken);
+  const refreshTokenExpires = useUserStore(
+    (state) => state.refreshTokenExpires
+  );
   const userId = useUserStore((state) => state.userId);
+  const webApiUrl = useUserStore((state) => state.webApiUrl);
+  const setAccessToken = useUserStore((state) => state.setAccessToken);
+  const setAccessTokenExpires = useUserStore(
+    (state) => state.setAccessTokenExpires
+  );
+  const setErrorMessage = useUserStore((state) => state.setErrorMessage);
+
+  // React Router
+  const navigate = useNavigate();
 
   // props
   const file: FileEntity = props.file;
@@ -50,14 +70,46 @@ export const MyImage = (props: any) => {
     const getMyBlob = async () => {
       console.log('画像の初期化を開始します');
 
-      // blob を取得する
-      const responseBlob = await getBlob(
+      // アクセストークンが有効期限切れの場合はリフレッシュする
+      const refreshResult = await refreshAccessToken(
         webApiUrl,
         userId,
-        currentChannel.id,
-        file.id,
-        accessToken
+        accessTokenExpires,
+        refreshToken,
+        refreshTokenExpires,
+        appName
       );
+
+      // リフレッシュトークンが期限切れの場合はログイン画面に遷移する
+      if (refreshResult.shouldMoveToLogin === true) {
+        navigate('/login');
+        return;
+      }
+
+      // アクセストークンが更新された場合はグローバル状態を更新する
+      if (refreshResult.refreshed === true) {
+        setAccessToken(refreshResult.refreshResponse?.accessToken!);
+        setAccessTokenExpires(
+          refreshResult.refreshResponse?.accessTokenExpires!
+        );
+      }
+
+      // blob を取得する
+      let responseBlob: GetBlobResponse;
+      try {
+        responseBlob = await getBlob(
+          webApiUrl,
+          userId,
+          currentChannel.id,
+          file.id,
+          accessToken
+        );
+      } catch (e) {
+        console.error(GET_BLOB_ERROR_MESSAGE);
+        console.error(e);
+        setErrorMessage(GET_BLOB_ERROR_MESSAGE);
+        return;
+      }
 
       // レスポンスから blob を作成してセットする
       const binary = base64js.toByteArray(responseBlob.blob);

@@ -1,7 +1,10 @@
 import { describe, test, beforeEach, expect, jest } from '@jest/globals';
 import { HttpStatus } from '@fnya/common-entity-for-slack/constant/HttpStatus';
 import { HttpStatusCode } from '@fnya/common-entity-for-slack/constant/HttpStatusCode';
-import { initialize1st, initialize2nd } from '../../features/InitializeUser';
+import {
+  initializeUser1st,
+  initializeUser2nd,
+} from '../../features/InitializeUser';
 import * as api from '../../utils/ApiUtil';
 
 describe('Initialize のテスト', () => {
@@ -20,7 +23,7 @@ describe('Initialize のテスト', () => {
       postSpy.mockImplementation(() => Promise.resolve(expected));
 
       // 実行
-      const actual = await initialize1st(url, email);
+      const actual = await initializeUser1st(url, email);
 
       // 検証
       expect(actual).toEqual(expected);
@@ -45,7 +48,7 @@ describe('Initialize のテスト', () => {
       postSpy.mockImplementation(() => Promise.resolve(expected));
 
       // 実行
-      const actual = await initialize2nd(
+      const actual = await initializeUser2nd(
         url,
         email,
         password,

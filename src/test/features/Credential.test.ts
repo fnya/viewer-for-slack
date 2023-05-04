@@ -1,12 +1,5 @@
+import { describe, test, afterEach, expect, jest } from '@jest/globals';
 import { mockIPC, clearMocks } from '@tauri-apps/api/mocks';
-import {
-  describe,
-  test,
-  afterEach,
-  beforeEach,
-  expect,
-  jest,
-} from '@jest/globals';
 import { saveCredentials, loadCredentials } from '../../features/Credential';
 
 describe('Load のテスト', () => {
@@ -22,7 +15,10 @@ describe('Load のテスト', () => {
       const refreshTokenExpires = 1;
       const initialized = true;
       const isAdmin = false;
-      const serviceName = 'serviceName';
+      const appName = 'Viewer for Slack';
+      const webApiUrl = 'https://example.com';
+      const countPerRequest = 10;
+      const workspaceName = 'workspaceName';
 
       mockIPC((cmd, args) => {
         if (cmd === 'save_credentials') {
@@ -38,7 +34,10 @@ describe('Load のテスト', () => {
         refreshTokenExpires,
         initialized,
         isAdmin,
-        serviceName
+        appName,
+        webApiUrl,
+        countPerRequest,
+        workspaceName
       );
 
       // 検証
@@ -65,7 +64,7 @@ describe('Load のテスト', () => {
       });
 
       // 実行
-      const actual = await loadCredentials('serviceName');
+      const actual = await loadCredentials();
 
       // 検証
       expect(actual).toEqual(expected);

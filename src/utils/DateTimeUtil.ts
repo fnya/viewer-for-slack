@@ -1,8 +1,10 @@
+import { ErrorMessage } from '../constants/ErrorMessage';
+
 /**
  * tsから日時文字列を作成する
  *
  * @param ts ts
- * @returns 日時文字列(yyyy-MM-dd HH:mm:ss)
+ * @returns 日時文字列(yyyy/M/d HH:mm)
  */
 export const toDateTimeString = (ts: string) => {
   const date = new Date(Number(ts) * 1000);
@@ -18,6 +20,20 @@ export const toDateTimeString = (ts: string) => {
     ':' +
     paddingZero(date.getMinutes(), 2)
   );
+};
+
+/**
+ * トークンが期限切れの場合はエラーをスローする(アクセストークン、リフレッシュトークン共通)
+ *
+ * @param tokenExpires トークンの期限
+ */
+export const validateTokenExpires = (tokenExpires: number) => {
+  const currentDate = new Date();
+  const currentDateTime = currentDate.valueOf() / 1000;
+
+  if (tokenExpires <= currentDateTime) {
+    throw new Error(ErrorMessage.TOKEN_EXPIRED);
+  }
 };
 
 /**

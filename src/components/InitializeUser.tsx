@@ -188,7 +188,7 @@ export const InitializeUser = () => {
     // ユーザー情報を store に反映
     setUserId(result.userId);
     setAccessToken(result.accessToken);
-    setAccessTokenExpires(payloadClaim.exp);
+    setAccessTokenExpires(result.accessTokenExpires);
     setRefreshToken(result.refreshToken);
     setRefreshTokenExpires(result.refreshTokenExpires);
     setIsAdmin(payloadClaim.admin);

@@ -13,6 +13,7 @@ export interface UserState {
   countPerRequest: number;
   currentChannel: ChannelEntity;
   currentMessage: MesssageEntity;
+  errorMessage: string;
   initialized: boolean;
   isAdmin: boolean;
   members: MemberEntity[];
@@ -30,6 +31,7 @@ export interface UserState {
   setCountPerRequest: (countPerRequest: number) => void;
   setCurrentChannel: (currentChannel: ChannelEntity) => void;
   setCurrentMessage: (currentMessage: MesssageEntity) => void;
+  setErrorMessage: (errorMessage: string) => void;
   setInitialized: (initialized: boolean) => void;
   setIsAdmin: (isAdmin: boolean) => void;
   setMembers: (members: MemberEntity[]) => void;
@@ -60,6 +62,7 @@ export const useUserStore = create<UserState>((set) => ({
     urls: [],
     isEdited: false,
   },
+  errorMessage: '',
   initialized: false,
   isAdmin: false,
   members: [],
@@ -82,6 +85,8 @@ export const useUserStore = create<UserState>((set) => ({
     set((state) => ({ ...state, currentChannel })),
   setCurrentMessage: (currentMessage: MesssageEntity) =>
     set((state) => ({ ...state, currentMessage })),
+  setErrorMessage: (errorMessage: string) =>
+    set((state) => ({ ...state, errorMessage })),
   setInitialized: (initialized: boolean) =>
     set((state) => ({ ...state, initialized })),
   setIsAdmin: (isAdmin: boolean) => set((state) => ({ ...state, isAdmin })),

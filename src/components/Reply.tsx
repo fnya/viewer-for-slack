@@ -3,9 +3,9 @@ import { jsx, css } from '@emotion/react';
 import { convertTextToElements } from '../utils/ElementUtil';
 import { DateTime } from './parts/DateTime';
 import { Edited } from './parts/Edited';
+import { Files } from './parts/Files';
 import { ReplyEntity } from '@fnya/common-entity-for-slack/entity/response/entity/ReplyEntity';
 import { User } from './parts/User';
-import { Files } from './parts/Files';
 
 export const Reply = (props: any) => {
   // props
