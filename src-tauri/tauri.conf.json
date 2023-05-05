@@ -24,6 +24,9 @@
       },
       "process": {
         "exit": true
+      },
+      "dialog": {
+        "all": true
       }
     },
     "bundle": {
