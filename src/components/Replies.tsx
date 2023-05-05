@@ -76,12 +76,18 @@ export const Replies = (props: any) => {
         return;
       }
 
+      // ローカルのアクセストークン
+      let localAccessToken = '';
+
       // アクセストークンが更新された場合はグローバル状態を更新する
       if (refreshResult.refreshed === true) {
         setAccessToken(refreshResult.refreshResponse?.accessToken!);
         setAccessTokenExpires(
           refreshResult.refreshResponse?.accessTokenExpires!
         );
+        localAccessToken = refreshResult.refreshResponse?.accessToken!;
+      } else {
+        localAccessToken = accessToken;
       }
 
       // リプライ一覧を取得する
@@ -92,7 +98,7 @@ export const Replies = (props: any) => {
           webApiUrl,
           currentChannel.id,
           currentMessage.ts,
-          accessToken
+          localAccessToken
         );
       } catch (e) {
         console.error(GET_REPLIES_ERROR_MESSAGE);

@@ -129,9 +129,9 @@ export const refreshAccessToken = async (
  */
 export const validateTokenExpires = (tokenExpires: number) => {
   const currentDate = new Date();
-  const currentDateTime = currentDate.valueOf() / 1000;
+  const currentDateTime = Math.floor(currentDate.valueOf() / 1000);
 
-  if (tokenExpires <= currentDateTime) {
+  if (tokenExpires < currentDateTime) {
     throw new Error(ErrorMessage.TOKEN_EXPIRED);
   }
 };

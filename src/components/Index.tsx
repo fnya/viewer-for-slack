@@ -1,15 +1,24 @@
 /** @jsxImportSource @emotion/react */
 import { jsx, css } from '@emotion/react';
+import { ErrorMessage } from '../constants/ErrorMessage';
 import { loadCredentials } from '../features/Credential';
-import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '../stores/UserStore';
+import { validateTokenExpires } from '../utils/AuthUtil';
 
 export const Index = () => {
   // グローバル状態管理
   const setAppName = useUserStore((state) => state.setAppName);
-  const setWebApiUrl = useUserStore((state) => state.setWebApiUrl);
   const setCountPerRequest = useUserStore((state) => state.setCountPerRequest);
+  const setErrorMessage = useUserStore((state) => state.setErrorMessage);
+  const setIsAdmin = useUserStore((state) => state.setIsAdmin);
+  const setUserId = useUserStore((state) => state.setUserId);
+  const setRefreshTokenExpires = useUserStore(
+    (state) => state.setRefreshTokenExpires
+  );
+  const setRefreshToken = useUserStore((state) => state.setRefreshToken);
+  const setWebApiUrl = useUserStore((state) => state.setWebApiUrl);
   const setWorkSpaceName = useUserStore((state) => state.setWorkSpaceName);
 
   // React Router
@@ -23,22 +32,44 @@ export const Index = () => {
       if (credentials === 'error') {
         // クレデンシャルがロードできない場合は初期化画面へ遷移する
         navigate('/initialize');
-      } else {
-        // クレデンシャルがロードできた場合はグローバル状態に設定する
-        const credentialsJson = JSON.parse(credentials);
+        return;
+      }
+
+      const credentialsJson = JSON.parse(credentials);
+
+      if (credentialsJson.userInitialized === false) {
+        // ユーザー初期化未完了の場合は初期化画面へ遷移する
+        navigate('/initializeUser');
+        console.log(4);
+        return;
+      }
+
+      if (credentialsJson.userInitialized === true) {
         setAppName(credentialsJson.appName);
-        setWebApiUrl(credentialsJson.webApiUrl);
         setCountPerRequest(credentialsJson.countPerRequest);
+        setWebApiUrl(credentialsJson.webApiUrl);
         setWorkSpaceName(credentialsJson.workSpaceName);
 
-        if (credentialsJson.userInitialized === true) {
-          // ユーザー初期化済みの場合はログイン画面へ遷移する
+        try {
+          validateTokenExpires(credentialsJson.refreshTokenExpires);
+        } catch (e) {
+          // ログイン画面へ遷移する
           navigate('/login');
-        } else {
-          // ユーザー初期化未完了の場合は初期化画面へ遷移する
-          navigate('/initializeUser');
+          return;
         }
+
+        // ビュー画面へ遷移する
+        setUserId(credentialsJson.userId);
+        setRefreshToken(credentialsJson.refreshToken);
+        setRefreshTokenExpires(credentialsJson.refreshTokenExpires);
+        setIsAdmin(credentialsJson.isAdmin);
+        navigate('/viewer');
+        return;
       }
+
+      // ここはこない
+      setErrorMessage(ErrorMessage.UNEXPECTED_ERROR);
+      navigate('/viewer');
     };
 
     void myLoadCredentials();

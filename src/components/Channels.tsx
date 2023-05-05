@@ -20,6 +20,7 @@ export const Channels = () => {
   const [channels, setChannels] = useState<ChannelEntity[]>([]);
 
   // グローバル状態管理
+  const store = useUserStore();
   const accessToken = useUserStore((state) => state.accessToken);
   const accessTokenExpires = useUserStore((state) => state.accessTokenExpires);
   const appName = useUserStore((state) => state.appName);
@@ -62,12 +63,18 @@ export const Channels = () => {
         return;
       }
 
+      // ローカルのアクセストークン
+      let localAccessToken = '';
+
       // アクセストークンが更新された場合はグローバル状態を更新する
       if (refreshResult.refreshed === true) {
         setAccessToken(refreshResult.refreshResponse?.accessToken!);
         setAccessTokenExpires(
           refreshResult.refreshResponse?.accessTokenExpires!
         );
+        localAccessToken = refreshResult.refreshResponse?.accessToken!;
+      } else {
+        localAccessToken = accessToken;
       }
 
       // チャンネル一覧を取得する
@@ -76,7 +83,7 @@ export const Channels = () => {
         channelsResponse = await getUserChannels(
           webApiUrl,
           userId,
-          accessToken
+          localAccessToken
         );
       } catch (e) {
         console.error(GET_CHANNELS_ERROR_MESSAGE);
@@ -89,7 +96,7 @@ export const Channels = () => {
       // メンバー情報を取得する
       let memberResponse: GetMembersResponse;
       try {
-        memberResponse = await getMembers(webApiUrl, accessToken);
+        memberResponse = await getMembers(webApiUrl, localAccessToken);
       } catch (e) {
         console.error(GET_MEMBERS_ERROR_MESSAGE);
         console.error(e);
@@ -114,7 +121,7 @@ export const Channels = () => {
 
   return (
     <>
-      {channels.map((channel) => {
+      {channels?.map((channel) => {
         return <Channel key={channel.id} channel={channel} />;
       })}
     </>

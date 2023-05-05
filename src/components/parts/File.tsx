@@ -84,10 +84,16 @@ export const File = (props: any) => {
       return;
     }
 
+    // ローカルのアクセストークン
+    let localAccessToken = '';
+
     // アクセストークンが更新された場合はグローバル状態を更新する
     if (refreshResult.refreshed === true) {
       setAccessToken(refreshResult.refreshResponse?.accessToken!);
       setAccessTokenExpires(refreshResult.refreshResponse?.accessTokenExpires!);
+      localAccessToken = refreshResult.refreshResponse?.accessToken!;
+    } else {
+      localAccessToken = accessToken;
     }
 
     // blob を取得する
@@ -98,7 +104,7 @@ export const File = (props: any) => {
         userId,
         currentChannel.id,
         file.id,
-        accessToken
+        localAccessToken
       );
     } catch (e) {
       console.error(GET_BLOB_ERROR_MESSAGE);

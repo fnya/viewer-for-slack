@@ -91,10 +91,16 @@ export const Messages = () => {
       return;
     }
 
+    // ローカルのアクセストークン
+    let localAccessToken = '';
+
     // アクセストークンが更新された場合はグローバル状態を更新する
     if (refreshResult.refreshed === true) {
       setAccessToken(refreshResult.refreshResponse?.accessToken!);
       setAccessTokenExpires(refreshResult.refreshResponse?.accessTokenExpires!);
+      localAccessToken = refreshResult.refreshResponse?.accessToken!;
+    } else {
+      localAccessToken = accessToken;
     }
 
     // メッセージ一覧を取得する
@@ -103,7 +109,7 @@ export const Messages = () => {
       messagesResponse = await getMessages(
         webApiUrl,
         currentChannel.id,
-        accessToken,
+        localAccessToken,
         countPerRequest,
         oldestMessageTs
       );
@@ -154,12 +160,18 @@ export const Messages = () => {
         return;
       }
 
+      // ローカルのアクセストークン
+      let localAccessToken = '';
+
       // アクセストークンが更新された場合はグローバル状態を更新する
       if (refreshResult.refreshed === true) {
         setAccessToken(refreshResult.refreshResponse?.accessToken!);
         setAccessTokenExpires(
           refreshResult.refreshResponse?.accessTokenExpires!
         );
+        localAccessToken = refreshResult.refreshResponse?.accessToken!;
+      } else {
+        localAccessToken = accessToken;
       }
 
       // メッセージ一覧を取得する
@@ -168,7 +180,7 @@ export const Messages = () => {
         messagesResponse = await getMessages(
           webApiUrl,
           currentChannel.id,
-          accessToken,
+          localAccessToken,
           countPerRequest
         );
       } catch (e) {

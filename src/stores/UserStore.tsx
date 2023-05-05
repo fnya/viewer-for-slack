@@ -101,8 +101,8 @@ export const useUserStore = create<UserState>((set) => ({
   setShowReplies: (showReplies: boolean) =>
     set((state) => ({ ...state, showReplies })),
   setUserId: (userId: string) => set((state) => ({ ...state, userId })),
-  setViewInitialized: (initialized: boolean) =>
-    set((state) => ({ ...state, viewInitialized: initialized })),
+  setViewInitialized: (viewInitialized: boolean) =>
+    set((state) => ({ ...state, viewInitialized })),
   setWebApiUrl: (webApiUrl: string) =>
     set((state) => ({ ...state, webApiUrl })),
   setWorkSpaceName: (workSpaceName: string) =>
