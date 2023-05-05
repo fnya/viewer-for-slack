@@ -66,7 +66,12 @@
       "csp": null
     },
     "updater": {
-      "active": false
+      "active": false,
+      "endpoints": [
+        "https://gist.githubusercontent.com/fnya/ae4af4b4fcfbf2cdbd331ac4fec2ddc1/raw/60a2148bcf75566e5651ed2a15f130bd34140fb1/latest.json"
+      ],
+      "dialog": true,
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDFGRDQ2ODY3RjA0QTEwRDcKUldUWEVFcndaMmpVSHphMXkvTFlEMlhjdmtON1E5VFNUM0R0dHR1ay9Udm41ZkFTT09KYURLeUUK"
     },
     "windows": [
       {
