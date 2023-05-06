@@ -1,6 +1,7 @@
 # GitHub > repository > settings > Actions > General > Workflow permissions > Read and write permissions
-# Register TAURI_PRIVATE_KEY in GitHub > repository > settings > Secrets and variables > Actions > Secrets (Base64 encoded)
-# Register TAURI_KEY_PASSWORD in GitHub > repository > settings > Secrets and variables > Actions > Secrets (Base64 encoded)
+# Register prod in GitHub > repository > settings > Environments
+# Register TAURI_PRIVATE_KEY prod in GitHub
+# Register TAURI_KEY_PASSWORD prod in GitHub
 name: 'publish'
 on:
   push:
