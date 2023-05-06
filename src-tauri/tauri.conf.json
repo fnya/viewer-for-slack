@@ -6,8 +6,8 @@
     "distDir": "../dist"
   },
   "package": {
-    "productName": "viewer-for-slack",
-    "version": "0.0.0"
+    "productName": "Viewer for Slack",
+    "version": "0.0.1"
   },
   "tauri": {
     "allowlist": {

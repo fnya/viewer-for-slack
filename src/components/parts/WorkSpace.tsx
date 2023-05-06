@@ -13,5 +13,5 @@ export const WorkSpace = () => {
     font-size: 90%; /* 標準フォントサイズの90%に指定 */
   `;
 
-  return <div css={workSpaceStyle}>{workSpaceName}</div>;
+  return <div css={workSpaceStyle}>[test]{workSpaceName}</div>;
 };
