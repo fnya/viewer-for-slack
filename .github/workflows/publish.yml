@@ -2,6 +2,8 @@
 # Add deploy in GitHub > repository > settings > Environments
 # Add TAURI_PRIVATE_KEY to deployd in Environments secrets
 # Add TAURI_KEY_PASSWORD to deploy in Environments secrets
+# Add TAURI_PRIVATE_KEY in GitHub > repository > settings > Secrets and variables > Actions
+# Add TAURI_KEY_PASSWORD in GitHub > repository > settings > Secrets and variables > Actions
 
 name: 'publish'
 on:
