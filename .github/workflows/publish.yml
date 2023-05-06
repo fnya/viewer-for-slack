@@ -1,7 +1,8 @@
 # GitHub > repository > settings > Actions > General > Workflow permissions > Read and write permissions
-# Register prod in GitHub > repository > settings > Environments
-# Register TAURI_PRIVATE_KEY prod in GitHub
-# Register TAURI_KEY_PASSWORD prod in GitHub
+# Add deploy in GitHub > repository > settings > Environments
+# Add TAURI_PRIVATE_KEY to deployd in Environments secrets
+# Add TAURI_KEY_PASSWORD to deploy in Environments secrets
+
 name: 'publish'
 on:
   push:
