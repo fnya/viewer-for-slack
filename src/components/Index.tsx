@@ -37,19 +37,19 @@ export const Index = () => {
 
       const credentialsJson = JSON.parse(credentials);
 
+      // 必要情報セット
+      setAppName(credentialsJson.appName);
+      setCountPerRequest(credentialsJson.countPerRequest);
+      setWebApiUrl(credentialsJson.webApiUrl);
+      setWorkSpaceName(credentialsJson.workSpaceName);
+
       if (credentialsJson.userInitialized === false) {
         // ユーザー初期化未完了の場合は初期化画面へ遷移する
         navigate('/initializeUser');
-        console.log(4);
         return;
       }
 
       if (credentialsJson.userInitialized === true) {
-        setAppName(credentialsJson.appName);
-        setCountPerRequest(credentialsJson.countPerRequest);
-        setWebApiUrl(credentialsJson.webApiUrl);
-        setWorkSpaceName(credentialsJson.workSpaceName);
-
         try {
           validateTokenExpires(credentialsJson.refreshTokenExpires);
         } catch (e) {
