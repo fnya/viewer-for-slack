@@ -1,5 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { jsx, css } from '@emotion/react';
+import { DeletedFile } from './DeletedFile';
 import { FileEntity } from '@fnya/common-entity-for-slack/entity/response/entity/FileEntity';
 import { getBlob } from '../../features/Blob';
 import { GetBlobResponse } from '@fnya/common-entity-for-slack/entity/response/GetBlobResponse';
@@ -15,11 +16,15 @@ import Button from 'react-bootstrap/Button';
 export const File = (props: any) => {
   // 定数
   const GET_BLOB_ERROR_MESSAGE = 'ファイルのダウンロードに失敗しました。';
+  const DELETED_FILE_CRETED = '1970-01-01 09:00:00';
 
   // ローカル状態管理
   const [disabled, setDisabled] = useState(false); // ボタンの有効/無効
   const [message, setMessage] = useState('');
   const [showMessage, setShowMessage] = useState(false);
+  const [deleted, setDeleted] = useState(
+    props.file.created === DELETED_FILE_CRETED
+  );
 
   // グローバル状態管理
   const accessToken = useUserStore((state) => state.accessToken);
@@ -129,7 +134,10 @@ export const File = (props: any) => {
   return (
     <>
       <div>
-        <div css={fileStyle}>
+        <div css={deleted ? [] : noDisplayStyle}>
+          <DeletedFile />
+        </div>
+        <div css={deleted ? noDisplayStyle : fileStyle}>
           <Alert css={showMessage ? [] : noDisplayStyle} variant="info">
             {message}
           </Alert>

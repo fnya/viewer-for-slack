@@ -11,7 +11,8 @@ export const Files = (props: any) => {
   return (
     <>
       {files.map((file: FileEntity) => {
-        return file.mimeType.indexOf('image') === -1 ? (
+        return file?.mimeType === undefined ||
+          file?.mimeType?.indexOf('image') === -1 ? (
           <File key={file.id} file={file} />
         ) : (
           <MyImage key={file.id} file={file} />
