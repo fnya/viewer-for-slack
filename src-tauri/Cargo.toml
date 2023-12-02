@@ -1,6 +1,6 @@
 [package]
 name = "viewer-for-slack"
-version = "0.0.5"
+version = "0.0.8"
 description = "Viewer for Slack"
 authors = ["fnya"]
 license = "MIT Lisence"
@@ -19,6 +19,8 @@ serde_json = "1.0"
 config = "0.13.3"
 keyring = "2.0.5"
 whoami = "1.4.1"
+openssl = "0.10.60"
+rustix ="0.38.26"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem
