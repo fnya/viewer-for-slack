@@ -4030,7 +4030,6 @@ version = "0.0.8"
 dependencies = [
  "config",
  "keyring",
- "openssl",
  "rustix 0.38.26",
  "serde",
  "serde_json",
